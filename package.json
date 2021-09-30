@@ -1,0 +1,58 @@
+{
+  "name": "duo_universal",
+  "version": "1.0.1",
+  "description": "Node.js implementation of the Duo Universal SDK.",
+  "keywords": [
+    "duo",
+    "duo security"
+  ],
+  "author": "Lukas Hroch",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukashroch/duo_universal_nodejs.git"
+  },
+  "homepage": "https://github.com/lukashroch/duo_universal_nodejs#readme",
+  "bugs": {
+    "url": "https://github.com/lukashroch/duo_universal_nodejs/issues"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "engines": {
+    "node": ">= 12.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc --project tsconfig.build.json",
+    "prepublishOnly": "npm run build",
+    "lint": "eslint --ext .ts src/",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "jest",
+    "test:coverage": "npm run test -- --coverage",
+    "test:watch": "npm run test -- --watch"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.0",
+    "@types/jsonwebtoken": "^8.5.4",
+    "@types/node": "^16.4.13",
+    "@typescript-eslint/eslint-plugin": "^4.29.1",
+    "@typescript-eslint/parser": "^4.29.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^27.0.6",
+    "jest-extended": "^0.11.5",
+    "prettier": "^2.3.2",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.4",
+    "ts-node": "^10.2.0",
+    "typescript": "^4.3.5"
+  }
+}

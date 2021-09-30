@@ -1,0 +1,11 @@
+coverage
+dist
+node_modules
+
+# Log files
+npm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode/*
+!.vscode/launch.json

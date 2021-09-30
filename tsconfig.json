@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "ES2019",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowJs": false,
+    "lib": ["ES2019"],
+    "declaration": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "rootDir": "src",
+    "types": [
+      "node",
+      "jest",
+      "jest-extended"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href='/style.css'>
+    <title>Duo Security Universal prompt demo</title>
+  </head>
+  <body>
+    <div class="content">
+        <div class="logo">
+            <img src="/images/logo.png">
+        </div>
+        <div class="output">
+            <pre class="language-json"><code class="language-json" id="message">{{ message }}</code></pre>
+        </div>
+        <form class="input-form" action="/" method="POST">
+            <div class="form-group">
+                <label for="exampleInputEmail1"><b>Name:</b></label>
+                <input class="form-control" name="username" type="text" placeholder="username" id="username">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1"><b>Password:</b></label>
+                <input class="form-control" name="password" type="password" placeholder="password" id="password">
+            </div>
+            <div class="buttons">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+  </body>
+</html>

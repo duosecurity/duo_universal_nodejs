@@ -1,0 +1,20 @@
+{
+  "name": "duo_universal_example",
+  "version": "1.0.0",
+  "description": "Duo Universal Node.js example",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "Lukas Hroch",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
+    "duo_universal": "^1.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "nunjucks": "^3.2.3"
+  }
+}
