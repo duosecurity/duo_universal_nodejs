@@ -1,13 +1,7 @@
+import { randomBytes } from 'crypto';
+
 export const generateRandomString = (length: number): string => {
-  const result = [];
-  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const charactersLength = characters.length;
-
-  for (let i = 0; i < length; i++) {
-    result.push(characters.charAt(Math.floor(Math.random() * charactersLength)));
-  }
-
-  return result.join('');
+  return randomBytes(length).toString('base64url').substring(0,length);
 };
 
 export const getTimeInSeconds = (date = new Date(Date.now())): number =>

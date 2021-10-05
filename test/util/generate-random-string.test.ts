@@ -1,6 +1,6 @@
 import { util } from '../../src';
 
-describe('utils', () => {
+describe('Test random string generation function', () => {
   it('should generate random string of given length', () => {
     const randomString = util.generateRandomString(36);
 
