@@ -58,7 +58,6 @@ export class Client {
 
     this.axios = axios.create({
       baseURL: this.baseURL,
-      headers: { 'user-agent': constants.USER_AGENT },
     });
   }
 
@@ -280,7 +279,12 @@ export class Client {
     try {
       const { data } = await this.axios.post<TokenResponse>(
         this.TOKEN_ENDPOINT,
-        new URLSearchParams(request)
+        new URLSearchParams(request),
+        {
+          headers: {
+            'user-agent': `${constants.USER_AGENT} node/${process.versions.node} v8/${process.versions.v8}`,
+          },
+        }
       );
 
       /* Verify that we are receiving the expected response from Duo */
