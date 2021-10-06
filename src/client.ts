@@ -77,7 +77,7 @@ export class Client {
     if (clientSecret.length !== constants.CLIENT_SECRET_LENGTH)
       throw new DuoException(constants.INVALID_CLIENT_SECRET_ERROR);
 
-    if (!/api-[a-zA-Z0-9]+\.duo(security)?\.com/.test(apiHost))
+    if (apiHost === '')
       throw new DuoException(constants.PARSING_CONFIG_ERROR);
 
     try {

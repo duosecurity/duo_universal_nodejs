@@ -59,7 +59,7 @@ describe('Client instance', () => {
   });
 
   it('should throw during new client creation with invalid API host', () => {
-    expect(() => new Client({ ...clientOps, apiHost: 'invalid.host.com' })).toThrowWithMessage(
+    expect(() => new Client({ ...clientOps, apiHost: '' })).toThrowWithMessage(
       DuoException,
       constants.PARSING_CONFIG_ERROR
     );
