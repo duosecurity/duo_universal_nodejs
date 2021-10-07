@@ -1,5 +1,5 @@
 import axios from 'axios';
-import jwt, { TokenExpiredError } from 'jsonwebtoken';
+import jwt, { TokenExpiredError, NotBeforeError } from 'jsonwebtoken';
 import { Client, DuoException, constants, util } from '../../src';
 
 const clientOps = {
@@ -24,6 +24,8 @@ const createIdToken = (
   let payload: any = {
     exp: time + constants.JWT_EXPIRATION,
     iat: time,
+    nbf: time,
+    sub: username,
     iss: `https://${clientOps.apiHost}/oauth/v1/token`,
     aud: clientOps.clientId,
     preferred_username: username,
@@ -136,7 +138,7 @@ describe('Token Exchange', () => {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
     } catch (err) {
       expect(err).toBeInstanceOf(DuoException);
-      expect(err.message).toBe(constants.MALFORMED_RESPONSE);
+      expect(err.message).toBe(constants.JWT_DECODE_ERROR);
     }
   });
 
@@ -151,7 +153,39 @@ describe('Token Exchange', () => {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
     } catch (err) {
       expect(err).toBeInstanceOf(DuoException);
-      expect(err.message).toBe(constants.MALFORMED_RESPONSE);
+      expect(err.message).toBe(constants.JWT_DECODE_ERROR);
+    }
+  });
+
+  it('should thrown when token has bad exp', async () => {
+    expect.assertions(3);
+
+    const token = createIdToken(null, { exp: util.getTimeInSeconds() - constants.JWT_EXPIRATION });
+    const data = createTokenResult(token);
+    mockedAxios.post.mockResolvedValue({ data });
+
+    try {
+      await client.exchangeAuthorizationCodeFor2FAResult(code, username);
+    } catch (err) {
+      expect(err).toBeInstanceOf(DuoException);
+      expect(err.message).toBe(constants.JWT_DECODE_ERROR);
+      expect(err.innername).toBe('TokenExpiredError');
+    }
+  });
+
+  it('should thrown when token has bad nbf', async () => {
+    expect.assertions(3);
+
+    const token = createIdToken(null, { nbf: util.getTimeInSeconds() + constants.JWT_EXPIRATION });
+    const data = createTokenResult(token);
+    mockedAxios.post.mockResolvedValue({ data });
+
+    try {
+      await client.exchangeAuthorizationCodeFor2FAResult(code, username);
+    } catch (err) {
+      expect(err).toBeInstanceOf(DuoException);
+      expect(err.message).toBe(constants.JWT_DECODE_ERROR);
+      expect(err.inner.name).toBe('NotBeforeError');
     }
   });
 
@@ -166,7 +200,7 @@ describe('Token Exchange', () => {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
     } catch (err) {
       expect(err).toBeInstanceOf(DuoException);
-      expect(err.message).toBe(constants.MALFORMED_RESPONSE);
+      expect(err.message).toBe(constants.JWT_DECODE_ERROR);
     }
   });
 

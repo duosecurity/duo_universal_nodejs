@@ -137,12 +137,20 @@ export class Client {
    * @returns {Promise<T>}
    * @memberof Client
    */
-  private async verifyToken<T>(token: string): Promise<T> {
+  private async verifyToken<T>(token: string, username: string): Promise<T> {
+    const tokenEndpoint = `${this.baseURL}${this.TOKEN_ENDPOINT}`;
+    const clientId = this.clientId;
     return new Promise((resolve, reject) => {
       jwt.verify(
         token,
         this.clientSecret,
-        { algorithms: [constants.SIG_ALGORITHM], clockTolerance: constants.JWT_LEEWAY },
+        {
+          algorithms: [constants.SIG_ALGORITHM],
+          clockTolerance: constants.JWT_LEEWAY,
+          issuer: tokenEndpoint,
+          subject: username,
+          audience: clientId,
+        },
         (err, decoded) =>
           err || !decoded
             ? reject(new DuoException(constants.JWT_DECODE_ERROR, err))
@@ -296,18 +304,13 @@ export class Client {
 
       if (data.token_type !== 'Bearer') throw new DuoException(constants.MALFORMED_RESPONSE);
 
-      const token = await this.verifyToken<TokenResponsePayload>(data.id_token);
+      const token = await this.verifyToken<TokenResponsePayload>(data.id_token, username);
 
       const tokenKeys = Object.keys(token);
       const requiredTokenKeys = ['exp', 'iat', 'iss', 'aud'];
 
       if (requiredTokenKeys.some((key) => !tokenKeys.includes(key)))
         throw new DuoException(constants.MALFORMED_RESPONSE);
-
-      /* Verify we have all expected fields in our token */
-      if (token.iss !== tokenEndpoint) throw new DuoException(constants.MALFORMED_RESPONSE);
-
-      if (token.aud !== this.clientId) throw new DuoException(constants.MALFORMED_RESPONSE);
 
       if (!token.preferred_username || token.preferred_username !== username)
         throw new DuoException(constants.USERNAME_ERROR);
