@@ -169,7 +169,7 @@ describe('Token Exchange', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
-      expect(err.innername).toBe('TokenExpiredError');
+      expect(err.inner.name).toBe('TokenExpiredError');
     }
   });
 
