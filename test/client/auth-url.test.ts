@@ -37,6 +37,23 @@ describe('Authentication URL', () => {
     }).toThrowWithMessage(DuoException, constants.DUO_STATE_ERROR);
   });
 
+  it('should throw if state is null for authentication URL', () => {
+    const client = new Client(clientOps);
+
+    expect(() => {
+      client.createAuthUrl(username, null as any);
+    }).toThrowWithMessage(DuoException, constants.DUO_STATE_ERROR);
+  });
+
+  it('should throw if username is null for authentication URL', () => {
+    const client = new Client(clientOps);
+    const state = client.generateState();
+
+    expect(() => {
+      client.createAuthUrl(null as any, state);
+    }).toThrowWithMessage(DuoException, constants.DUO_USERNAME_ERROR);
+  });
+
   it(`should create correct authentication URL (default 'useDuoCodeAttribute')`, () => {
     expect.assertions(7);
 

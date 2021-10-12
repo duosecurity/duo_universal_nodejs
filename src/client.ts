@@ -223,7 +223,10 @@ export class Client {
    * @memberof Client
    */
   createAuthUrl(username: string, state: string): string {
-    if (state.length < constants.MIN_STATE_LENGTH || state.length > constants.MAX_STATE_LENGTH)
+    if (!username)
+      throw new DuoException(constants.DUO_USERNAME_ERROR);
+
+    if (!state || state.length < constants.MIN_STATE_LENGTH || state.length > constants.MAX_STATE_LENGTH)
       throw new DuoException(constants.DUO_STATE_ERROR);
 
     const timeInSecs = getTimeInSeconds();

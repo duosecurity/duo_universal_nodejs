@@ -22,6 +22,7 @@ export const JWT_DECODE_ERROR = 'Error decoding JWT';
 export const PARSING_CONFIG_ERROR = 'Error parsing config';
 export const INVALID_CLIENT_ID_ERROR = 'The Client ID is invalid';
 export const INVALID_CLIENT_SECRET_ERROR = 'The Client Secret is invalid';
+export const DUO_USERNAME_ERROR = 'The username is invalid';
 export const DUO_STATE_ERROR = `State must be between ${MIN_STATE_LENGTH} to ${MAX_STATE_LENGTH} characters long`;
 export const FAILED_CONNECTION = 'Unable to connect to Duo';
 export const MALFORMED_RESPONSE = 'Result missing expected data';

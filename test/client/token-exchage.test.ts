@@ -235,6 +235,21 @@ describe('Token Exchange', () => {
     }
   });
 
+  it('should thrown when token is missing exp', async () => {
+    expect.assertions(2);
+
+    const token = createIdToken('exp');
+    const data = createTokenResult(token);
+    mockedAxios.post.mockResolvedValue({ data });
+
+    try {
+      await client.exchangeAuthorizationCodeFor2FAResult(code, username, nonce);
+    } catch (err) {
+      expect(err).toBeInstanceOf(DuoException);
+      expect(err.message).toBe(constants.MALFORMED_RESPONSE);
+    }
+  });
+
   it('should allow small clock skew', async () => {
     const token = createIdToken(null, { exp: util.getTimeInSeconds() - constants.JWT_LEEWAY / 2 });
     const data = createTokenResult(token);
