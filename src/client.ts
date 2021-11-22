@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import https from 'https';
 import jwt from 'jsonwebtoken';
 import { URL, URLSearchParams } from 'url';
 import * as constants from './constants';
@@ -56,8 +57,14 @@ export class Client {
     this.redirectUrl = redirectUrl;
     this.useDuoCodeAttribute = useDuoCodeAttribute ?? true;
 
+    var agent = new https.Agent({
+        ca: constants.DUO_PINNED_CERT,
+    });
+
     this.axios = axios.create({
       baseURL: this.baseURL,
+      httpsAgent: agent,
+      httpAgent: Error("HTTP disabled. Must use HTTPS"),
     });
   }
 
