@@ -167,7 +167,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
       expect(err.inner.name).toBe('TokenExpiredError');
@@ -183,7 +183,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
       expect(err.inner.name).toBe('NotBeforeError');
@@ -245,7 +245,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username, nonce);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.MALFORMED_RESPONSE);
     }
