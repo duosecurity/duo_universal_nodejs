@@ -1,6 +1,7 @@
 import axios from 'axios';
 import jwt, { TokenExpiredError, NotBeforeError } from 'jsonwebtoken';
 import { Client, DuoException, constants, util } from '../../src';
+import { AxiosError } from '../../src/axios-error';
 
 const clientOps = {
   clientId: '12345678901234567890',
@@ -65,7 +66,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult('', username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.MISSING_CODE_ERROR);
     }
@@ -76,7 +77,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, '');
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.USERNAME_ERROR);
     }
@@ -91,7 +92,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.MALFORMED_RESPONSE);
     }
@@ -106,7 +107,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.MALFORMED_RESPONSE);
     }
@@ -121,7 +122,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username, nonce);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.NONCE_ERROR);
     }
@@ -136,7 +137,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
     }
@@ -151,7 +152,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
     }
@@ -198,7 +199,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
     }
@@ -213,7 +214,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.USERNAME_ERROR);
     }
@@ -228,7 +229,7 @@ describe('Token Exchange', () => {
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
       expect(err.inner).toBeInstanceOf(TokenExpiredError);
@@ -274,11 +275,11 @@ describe('Token Exchange', () => {
 
   it('should thrown when http request failed (missing data)', async () => {
     expect.assertions(3);
-    mockedAxios.post.mockImplementation(() => Promise.reject({ response: {} }));
+    mockedAxios.post.mockImplementation(() => Promise.reject(new AxiosError({ response: {} })));
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.inner).toBeDefined();
     }
@@ -287,11 +288,11 @@ describe('Token Exchange', () => {
 
   it('should thrown when http request failed (missing response)', async () => {
     expect.assertions(3);
-    mockedAxios.post.mockImplementation(() => Promise.reject({}));
+    mockedAxios.post.mockImplementation(() => Promise.reject(new AxiosError()));
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.inner).toBeDefined();
     }

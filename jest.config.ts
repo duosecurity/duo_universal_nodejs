@@ -2,7 +2,7 @@ export default {
   clearMocks: true,
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
   rootDir: '.',
-  setupFilesAfterEnv: ['jest-extended'],
+  setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironment: 'node',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',

@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import jwt from 'jsonwebtoken';
 import { URL, URLSearchParams } from 'url';
 import * as constants from './constants';
@@ -163,16 +163,21 @@ export class Client {
    * Error handler to throw relevant error
    *
    * @private
-   * @param {(DuoException | AxiosError)} err
+   * @param {unknown} error
    * @returns {never}
    * @memberof Client
    */
-  private handleErrorResponse(err: DuoException | AxiosError): never {
-    const error = err as DuoException | AxiosError;
+  private handleErrorResponse(error: unknown): never {
     if (error instanceof DuoException) throw error;
 
-    const data = error.response?.data;
-    throw new DuoException(data ? this.getExceptionFromResult(data) : error.message, error);
+    if (axios.isAxiosError(error)) {
+      const data = error.response?.data;
+      throw new DuoException(data ? this.getExceptionFromResult(data) : error.message, error);
+    }
+
+    if (error instanceof Error) throw new DuoException(error.message, error);
+
+    throw new DuoException(constants.MALFORMED_RESPONSE);
   }
 
   /**

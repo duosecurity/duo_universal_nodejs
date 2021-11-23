@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { Client, DuoException, util } from '../../src';
+import { Client, DuoException, constants, util } from '../../src';
+import { AxiosError } from '../../src/axios-error';
 
 const clientOps = {
   clientId: '12345678901234567890',
@@ -31,6 +32,10 @@ describe('Health check', () => {
 
   beforeAll(() => {
     mockedAxios.create.mockReturnThis();
+    // restore isAxiosError
+    mockedAxios.isAxiosError.mockImplementation(
+      (payload) => typeof payload === 'object' && payload.isAxiosError === true
+    );
 
     client = new Client(clientOps);
   });
@@ -46,11 +51,11 @@ describe('Health check', () => {
   it('should thrown when http request failed (includes data)', async () => {
     expect.assertions(3);
     const response = { data: healthCheckHttpErrorResponse };
-    mockedAxios.post.mockImplementation(() => Promise.reject({ response }));
+    mockedAxios.post.mockImplementation(() => Promise.reject(new AxiosError({ response })));
 
     try {
       await client.healthCheck();
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.inner).toBeDefined();
     }
@@ -59,11 +64,11 @@ describe('Health check', () => {
 
   it('should thrown when http request failed (missing data)', async () => {
     expect.assertions(3);
-    mockedAxios.post.mockImplementation(() => Promise.reject({ response: {} }));
+    mockedAxios.post.mockImplementation(() => Promise.reject(new AxiosError()));
 
     try {
       await client.healthCheck();
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.inner).toBeDefined();
     }
@@ -72,13 +77,40 @@ describe('Health check', () => {
 
   it('should thrown when http request failed (missing response)', async () => {
     expect.assertions(3);
+    mockedAxios.post.mockImplementation(() => Promise.reject(new AxiosError()));
+
+    try {
+      await client.healthCheck();
+    } catch (err: any) {
+      expect(err).toBeInstanceOf(DuoException);
+      expect(err.inner).toBeDefined();
+    }
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+  });
+
+  it('should thrown on generic error', async () => {
+    expect.assertions(4);
+    mockedAxios.post.mockImplementation(() => Promise.reject(new Error()));
+
+    try {
+      await client.healthCheck();
+    } catch (err: any) {
+      expect(err).toBeInstanceOf(DuoException);
+      expect(err.inner).toBeDefined();
+      expect(err.inner).toBeInstanceOf(Error);
+    }
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+  });
+
+  it('should thrown on unknown error', async () => {
+    expect.assertions(3);
     mockedAxios.post.mockImplementation(() => Promise.reject({}));
 
     try {
       await client.healthCheck();
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
-      expect(err.inner).toBeDefined();
+      expect(err.message).toBe(constants.MALFORMED_RESPONSE);
     }
     expect(mockedAxios.post).toHaveBeenCalledTimes(1);
   });
