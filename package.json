@@ -6,7 +6,7 @@
     "duo",
     "duo security"
   ],
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/duosecurity/duo_universal_nodejs.git"
