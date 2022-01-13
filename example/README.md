@@ -6,7 +6,7 @@ A simple Node.js web application that serves a logon page integrated with Duo 2F
 
 Clone the repository
 ```
-git clone https://github.com/lukashroch/duo_universal_nodejs.git
+git clone https://github.com/duosecurity/duo_universal_nodejs.git
 ```
 
 Navigate to example folder

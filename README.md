@@ -1,24 +1,28 @@
 # Duo Universal Node.js library
 
-[![Build Status](https://github.com/lukashroch/duo_universal_nodejs/workflows/Node.js%20CI/badge.svg)](https://github.com/lukashroch/duo_universal_nodejs/actions/workflows/nodejs-ci.yml)
-[![npm version](https://badge.fury.io/js/duo_universal.svg)](https://badge.fury.io/js/duo_universal)
-[![Coverage](https://img.shields.io/codecov/c/github/lukashroch/duo_universal_nodejs.svg)](https://app.codecov.io/gh/lukashroch/duo_universal_nodejs)
-[![GitHub license](https://img.shields.io/github/license/lukashroch/duo_universal_nodejs)](https://github.com/lukashroch/duo_universal_nodejs/blob/master/LICENSE)
+[![Build Status](https://github.com/duosecurity/duo_universal_nodejs/workflows/Node.js%20CI/badge.svg)](https://github.com/duosecurity/duo_universal_nodejs/actions/workflows/nodejs-ci.yml)
+[![npm version](https://badge.fury.io/js/@duosecurity/duo_universal.svg)](https://badge.fury.io/js/@duosecurity/duo_universal)
+[![GitHub license](https://img.shields.io/github/license/duosecurity/duo_universal_nodejs)](https://github.com/duosecurity/duo_universal_nodejs/blob/master/LICENSE)
 
-Duo Web v4 SDK - Duo Universal Prompt implementation for Node.js
+This library allows a web developer to quickly add Duo's interactive, self-service, two-factor authentication to any Node.js web login form.
 
-- follows [Duo Web v4 SDK](https://duo.com/docs/duoweb) implementation
-- largely based on Duo Web v4 SDKs for [other languages](https://github.com/duosecurity)
+See our developer documentation at https://www.duosecurity.com/docs/duoweb for guidance on integrating Duo 2FA into your web application.
 
-## Installation
+Duo especially thanks [Lukas Hroch](https://github.com/lukashroch) for creating the initial version of this library.
 
+## Getting Started
+
+This library requires Node.js v12 or later.
+
+To use this client in your existing developing environment, install it from NPM
+
+```sh
+npm install @duosecurity/duo_universal
 ```
-npm install duo_universal
-```
 
-## Usage
+Once it's installed, see our developer documentation at https://duo.com/docs/duoweb and the `example` folder in this repo for guidance on integrating Duo 2FA into your web application.
 
-Read official Duo Web v4 SDK - Duo Universal Prompt docs (https://duo.com/docs/duoweb) to get familiar with the implementation details.
+## Usage Details
 
 ### 1. Import client
 
@@ -73,25 +77,28 @@ const token = await client.exchangeAuthorizationCodeFor2FAResult('duoCode', 'use
 
 ## Example
 
-Complete example of implementation can be found in [example folder](https://github.com/lukashroch/duo_universal_nodejs/tree/master/example). It's a simple express-based application. Please follow the README instructions in `example` folder to spin it up.
+Complete example of implementation can be found in [example folder](https://github.com/duosecurity/duo_universal_nodejs/tree/master/example). It's a simple express-based application. Please follow the README instructions in `example` folder to spin it up.
 
 ## Contribute
 
 Fork the repository
 
 Install dependencies
-```
+
+```sh
 npm install
 ```
 
 Make your proposed changes. Add tests if applicable, lint the code. Submit a pull request.
 
 ## Tests
-```
+
+```sh
 npm test
 ```
 
 ## Lint
-```
+
+```sh
 npm lint
 ```

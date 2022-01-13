@@ -1,20 +1,19 @@
 {
-  "name": "duo_universal",
-  "version": "1.0.3",
+  "name": "@duosecurity/duo_universal",
+  "version": "2.0.0",
   "description": "Node.js implementation of the Duo Universal SDK.",
   "keywords": [
     "duo",
     "duo security"
   ],
-  "author": "Lukas Hroch",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lukashroch/duo_universal_nodejs.git"
+    "url": "git+https://github.com/duosecurity/duo_universal_nodejs.git"
   },
-  "homepage": "https://github.com/lukashroch/duo_universal_nodejs#readme",
+  "homepage": "https://github.com/duosecurity/duo_universal_nodejs#readme",
   "bugs": {
-    "url": "https://github.com/lukashroch/duo_universal_nodejs/issues"
+    "url": "https://github.com/duosecurity/duo_universal_nodejs/issues"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

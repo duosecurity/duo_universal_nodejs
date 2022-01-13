@@ -1,6 +1,6 @@
 {
   "name": "duo_universal_example",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Duo Universal Node.js example",
   "main": "src/index.js",
   "scripts": {
@@ -8,8 +8,7 @@
     "start": "node src/index.js"
   },
   "keywords": [],
-  "author": "Lukas Hroch",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "body-parser": "^1.19.0",
     "dotenv": "^10.0.0",
