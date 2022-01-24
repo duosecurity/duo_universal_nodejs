@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Lukas Hroch
+//
+// SPDX-License-Identifier: MIT
+
 export type ClientPayload = {
   iss: string;
   sub: string;

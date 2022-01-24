@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2021 Lukas Hroch
+// SPDX-FileCopyrightText: 2022 Duo Security
+//
+// SPDX-License-Identifier: MIT
+
 import axios from 'axios';
 import { Client, DuoException, constants, util } from '../../src';
 

@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2021 Lukas Hroch
+// SPDX-FileCopyrightText: 2022 Duo Security
+//
+// SPDX-License-Identifier: MIT
+
 import fs from 'fs';
 
 const pkg = JSON.parse(fs.readFileSync('package.json', { encoding: 'utf-8' }));

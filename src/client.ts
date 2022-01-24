@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2021 Lukas Hroch
+// SPDX-FileCopyrightText: 2022 Duo Security
+//
+// SPDX-License-Identifier: MIT
+
 import axios, { AxiosInstance } from 'axios';
 import https from 'https';
 import jwt from 'jsonwebtoken';

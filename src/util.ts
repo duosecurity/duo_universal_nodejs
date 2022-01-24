@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2021 Lukas Hroch
+// SPDX-FileCopyrightText: 2022 Duo Security
+//
+// SPDX-License-Identifier: MIT
+
 import { randomBytes } from 'crypto';
 
 function bytesToBase64url(s: Buffer): string {

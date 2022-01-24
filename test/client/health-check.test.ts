@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Lukas Hroch
+//
+// SPDX-License-Identifier: MIT
+
 import axios from 'axios';
 import { Client, DuoException, constants, util } from '../../src';
 import { AxiosError } from '../../src/axios-error';

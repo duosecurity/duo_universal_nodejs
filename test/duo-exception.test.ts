@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Lukas Hroch
+//
+// SPDX-License-Identifier: MIT
+
 import { DuoException } from '../src';
 
 describe('DuoException', () => {

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Lukas Hroch
+//
+// SPDX-License-Identifier: MIT
+
 import { AxiosRequestConfig } from 'axios';
 
 export type AxiosErrorOps = {
