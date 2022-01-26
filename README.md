@@ -27,7 +27,7 @@ Once it's installed, see our developer documentation at https://duo.com/docs/duo
 ### 1. Import client
 
 ```ts
-import { Client } from 'duo_universal';
+import { Client } from '@duosecurity/duo_universal';
 ```
 
 ### 2. Create client

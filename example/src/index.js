@@ -9,7 +9,7 @@ const session = require('express-session');
 const { json, urlencoded } = require('body-parser');
 const nunjucks = require('nunjucks');
 const config = require('./config');
-const { Client } = require('duo_universal');
+const { Client } = require('@duosecurity/duo_universal');
 
 const startApp = async () => {
   // Express
