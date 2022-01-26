@@ -1,8 +1,7 @@
 // SPDX-FileCopyrightText: 2021 Lukas Hroch
+// SPDX-FileCopyrightText: 2022 Duo Security
 //
 // SPDX-License-Identifier: MIT
-
-require('dotenv').config();
 
 const express = require('express');
 const session = require('express-session');

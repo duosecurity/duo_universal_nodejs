@@ -19,14 +19,9 @@ Install dependencies
 npm install
 ```
 
-Copy .env-template file
-```
-cp .env-template .env
-```
-
 ## Run the application
 
-1. Copy the Client ID, Client Secret, and API Hostname values for your Web SDK application into the .env file
+1. Copy the Client ID, Client Secret, and API Hostname values for your Web SDK application into `src/config.js`
 
 2. Start the application
 ```
