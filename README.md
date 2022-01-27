@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/duosecurity/duo_universal_nodejs/workflows/Node.js%20CI/badge.svg)](https://github.com/duosecurity/duo_universal_nodejs/actions/workflows/nodejs-ci.yml)
 [![npm version](https://badge.fury.io/js/@duosecurity/duo_universal.svg)](https://badge.fury.io/js/@duosecurity/duo_universal)
-[![GitHub license](https://img.shields.io/github/license/duosecurity/duo_universal_nodejs)](https://github.com/duosecurity/duo_universal_nodejs/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/duosecurity/duo_universal_nodejs)](https://github.com/duosecurity/duo_universal_nodejs/blob/main/LICENSE)
 
 This library allows a web developer to quickly add Duo's interactive, self-service, two-factor authentication to any Node.js web login form.
 
@@ -77,7 +77,9 @@ const token = await client.exchangeAuthorizationCodeFor2FAResult('duoCode', 'use
 
 ## Example
 
-Complete example of implementation can be found in [example folder](https://github.com/duosecurity/duo_universal_nodejs/tree/master/example). It's a simple express-based application. Please follow the README instructions in `example` folder to spin it up.
+A complete implementation example can be found in [`example/`](/example).
+It's a simple express-based application.
+Please follow the [`example/README.md`](/example/README.md) to spin it up.
 
 ## Contribute
 
