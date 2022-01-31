@@ -62,14 +62,14 @@ export class Client {
     this.redirectUrl = redirectUrl;
     this.useDuoCodeAttribute = useDuoCodeAttribute ?? true;
 
-    var agent = new https.Agent({
-        ca: constants.DUO_PINNED_CERT,
+    const agent = new https.Agent({
+      ca: constants.DUO_PINNED_CERT,
     });
 
     this.axios = axios.create({
       baseURL: this.baseURL,
       httpsAgent: agent,
-      httpAgent: Error("HTTP disabled. Must use HTTPS"),
+      httpAgent: Error('HTTP disabled. Must use HTTPS'),
     });
   }
 
@@ -89,8 +89,7 @@ export class Client {
     if (clientSecret.length !== constants.CLIENT_SECRET_LENGTH)
       throw new DuoException(constants.INVALID_CLIENT_SECRET_ERROR);
 
-    if (apiHost === '')
-      throw new DuoException(constants.PARSING_CONFIG_ERROR);
+    if (apiHost === '') throw new DuoException(constants.PARSING_CONFIG_ERROR);
 
     try {
       new URL(redirectUrl);
@@ -240,10 +239,13 @@ export class Client {
    * @memberof Client
    */
   createAuthUrl(username: string, state: string): string {
-    if (!username)
-      throw new DuoException(constants.DUO_USERNAME_ERROR);
+    if (!username) throw new DuoException(constants.DUO_USERNAME_ERROR);
 
-    if (!state || state.length < constants.MIN_STATE_LENGTH || state.length > constants.MAX_STATE_LENGTH)
+    if (
+      !state ||
+      state.length < constants.MIN_STATE_LENGTH ||
+      state.length > constants.MAX_STATE_LENGTH
+    )
       throw new DuoException(constants.DUO_STATE_ERROR);
 
     const timeInSecs = getTimeInSeconds();
