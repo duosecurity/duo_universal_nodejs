@@ -148,7 +148,7 @@ export class Client {
    * @returns {Promise<T>}
    * @memberof Client
    */
-  private async verifyToken<T>(token: string, username: string): Promise<T> {
+  private async verifyToken<T>(token: string): Promise<T> {
     const tokenEndpoint = `${this.baseURL}${this.TOKEN_ENDPOINT}`;
     const clientId = this.clientId;
     return new Promise((resolve, reject) => {
@@ -159,7 +159,6 @@ export class Client {
           algorithms: [constants.SIG_ALGORITHM],
           clockTolerance: constants.JWT_LEEWAY,
           issuer: tokenEndpoint,
-          subject: username,
           audience: clientId,
         },
         (err, decoded) =>
@@ -326,7 +325,7 @@ export class Client {
 
       if (data.token_type !== 'Bearer') throw new DuoException(constants.MALFORMED_RESPONSE);
 
-      const token = await this.verifyToken<TokenResponsePayload>(data.id_token, username);
+      const token = await this.verifyToken<TokenResponsePayload>(data.id_token);
 
       const tokenKeys = Object.keys(token);
       const requiredTokenKeys = ['exp', 'iat', 'iss', 'aud'];
