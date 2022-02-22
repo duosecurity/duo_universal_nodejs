@@ -96,11 +96,11 @@ Make your proposed changes. Add tests if applicable, lint the code. Submit a pul
 ## Tests
 
 ```sh
-npm test
+npm run test
 ```
 
 ## Lint
 
 ```sh
-npm lint
+npm run lint
 ```
