@@ -35,7 +35,7 @@
     "test:watch": "npm run test -- --watch"
   },
   "dependencies": {
-    "axios": "^0.23.0",
+    "axios": "^0.27.2",
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
