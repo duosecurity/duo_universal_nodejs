@@ -8,7 +8,7 @@ const session = require('express-session');
 const { json, urlencoded } = require('body-parser');
 const nunjucks = require('nunjucks');
 const config = require('./config');
-const { Client } = require('@duosecurity/duo_universal');
+const { ClientBuilder } = require('@duosecurity/duo_universal');
 
 const startApp = async () => {
   // Express
@@ -23,8 +23,7 @@ const startApp = async () => {
 
   // Duo client
   const { clientId, clientSecret, apiHost, redirectUrl } = config;
-  const duoClient = new Client({ clientId, clientSecret, apiHost, redirectUrl });
-
+  const duoClient = new ClientBuilder({ clientId, clientSecret, apiHost, redirectUrl }).build();
   // Routes
   app.get('/', (req, res) => {
     res.render('index.html', { message: 'This is a demo' });

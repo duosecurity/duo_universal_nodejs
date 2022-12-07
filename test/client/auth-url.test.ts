@@ -6,7 +6,7 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { URL } from 'url';
-import { Client, DuoException, constants, util } from '../../src';
+import { ClientBuilder, DuoException, constants, util } from '../../src';
 
 const clientOps = {
   clientId: '12345678901234567890',
@@ -25,7 +25,7 @@ describe('Authentication URL', () => {
   });
 
   it('should throw if state is short for authentication URL', () => {
-    const client = new Client(clientOps);
+    const client = new ClientBuilder(clientOps).build();
     const shortLengthState = util.generateRandomString(constants.MIN_STATE_LENGTH - 1);
 
     expect(() => {
@@ -34,7 +34,7 @@ describe('Authentication URL', () => {
   });
 
   it('should thrown if state is long for authentication URL', () => {
-    const client = new Client(clientOps);
+    const client = new ClientBuilder(clientOps).build();
     const longLengthState = util.generateRandomString(constants.MAX_STATE_LENGTH + 1);
 
     expect(() => {
@@ -43,7 +43,7 @@ describe('Authentication URL', () => {
   });
 
   it('should throw if state is null for authentication URL', () => {
-    const client = new Client(clientOps);
+    const client = new ClientBuilder(clientOps).build();
 
     expect(() => {
       client.createAuthUrl(username, null as any);
@@ -51,7 +51,7 @@ describe('Authentication URL', () => {
   });
 
   it('should throw if username is null for authentication URL', () => {
-    const client = new Client(clientOps);
+    const client = new ClientBuilder(clientOps).build();
     const state = client.generateState();
 
     expect(() => {
@@ -62,7 +62,7 @@ describe('Authentication URL', () => {
   it(`should create correct authentication URL (default 'useDuoCodeAttribute')`, () => {
     expect.assertions(7);
 
-    const client = new Client(clientOps);
+    const client = new ClientBuilder(clientOps).build();
     const state = client.generateState();
 
     const { host, protocol, pathname, searchParams } = new URL(
@@ -89,7 +89,7 @@ describe('Authentication URL', () => {
   it(`should create correct authentication URL (explicit 'useDuoCodeAttribute')`, () => {
     expect.assertions(7);
 
-    const client = new Client({ ...clientOps, useDuoCodeAttribute: false });
+    const client = new ClientBuilder(clientOps).set_useDuoCodeAttribute(false).build();
     const state = client.generateState();
 
     const { host, protocol, pathname, searchParams } = new URL(

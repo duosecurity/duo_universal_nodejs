@@ -4,8 +4,8 @@
 // SPDX-License-Identifier: MIT
 
 import axios from 'axios';
-import jwt, { TokenExpiredError, NotBeforeError } from 'jsonwebtoken';
-import { Client, DuoException, constants, util } from '../../src';
+import jwt, { TokenExpiredError } from 'jsonwebtoken';
+import { Client, ClientBuilder, DuoException, constants, util } from '../../src';
 import { AxiosError } from '../../src/axios-error';
 
 const clientOps = {
@@ -63,7 +63,7 @@ describe('Token Exchange', () => {
   beforeAll(() => {
     mockedAxios.create.mockReturnThis();
 
-    client = new Client(clientOps);
+    client = new ClientBuilder(clientOps).build();
   });
 
   it('should throw with missing code', async () => {

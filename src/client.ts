@@ -21,13 +21,83 @@ import {
 } from './http';
 import { generateRandomString, getTimeInSeconds } from './util';
 
-export type ClientOptions = {
+export type RequiredClientOptions = {
   clientId: string;
   clientSecret: string;
   apiHost: string;
   redirectUrl: string;
-  useDuoCodeAttribute?: boolean;
 };
+
+export type ClientOptions = RequiredClientOptions & {
+  useDuoCodeAttribute: boolean;
+  axios: AxiosInstance;
+};
+
+export class ClientBuilder {
+  public clientId: string;
+  public clientSecret: string;
+  public apiHost: string;
+  public redirectUrl: string;
+
+  // Optional
+  private useDuoCodeAttribute: boolean;
+  private caCerts: string;
+  private axios: AxiosInstance;
+  private agent: https.AgentOptions;
+
+  constructor(options: RequiredClientOptions) {
+    const { clientId, clientSecret, apiHost, redirectUrl } = options;
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.apiHost = apiHost;
+    this.redirectUrl = redirectUrl;
+    this.useDuoCodeAttribute = true;
+    this.caCerts = constants.DUO_PINNED_CERT;
+    this.agent = new https.Agent({
+      ca: this.caCerts,
+    });
+    this.axios = axios.create({
+      baseURL: `https://${this.apiHost}`,
+      httpsAgent: this.agent,
+      httpAgent: Error('HTTP disabled. Must use HTTPS'),
+    });
+  }
+
+  build() {
+    const clientOptions: ClientOptions = {
+      clientId: this.clientId,
+      clientSecret: this.clientSecret,
+      apiHost: this.apiHost,
+      redirectUrl: this.redirectUrl,
+      useDuoCodeAttribute: this.useDuoCodeAttribute,
+      axios: this.axios,
+    };
+    return new Client(clientOptions);
+  }
+
+  set_caCerts(caCerts: string) {
+    this.caCerts = caCerts;
+    return this;
+  }
+
+  set_useDuoCodeAttribute(useDuoCodeAttribute: boolean) {
+    this.useDuoCodeAttribute = useDuoCodeAttribute;
+    return this;
+  }
+
+  set_httpProxy(host: string, port: number) {
+    this.axios = axios.create({
+      baseURL: `https://${this.apiHost}`,
+      httpsAgent: this.agent,
+      httpAgent: Error('HTTP disabled. Must use HTTPS'),
+      proxy: {
+        host: host,
+        port: port,
+      },
+    });
+    return this;
+  }
+}
 
 export class Client {
   readonly HEALTH_CHECK_ENDPOINT = '/oauth/v1/health_check';
@@ -53,24 +123,15 @@ export class Client {
   constructor(options: ClientOptions) {
     this.validateInitialConfig(options);
 
-    const { clientId, clientSecret, apiHost, redirectUrl, useDuoCodeAttribute } = options;
+    const { clientId, clientSecret, apiHost, redirectUrl, useDuoCodeAttribute, axios } = options;
 
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.apiHost = apiHost;
     this.baseURL = `https://${this.apiHost}`;
     this.redirectUrl = redirectUrl;
-    this.useDuoCodeAttribute = useDuoCodeAttribute ?? true;
-
-    const agent = new https.Agent({
-      ca: constants.DUO_PINNED_CERT,
-    });
-
-    this.axios = axios.create({
-      baseURL: this.baseURL,
-      httpsAgent: agent,
-      httpAgent: Error('HTTP disabled. Must use HTTPS'),
-    });
+    this.useDuoCodeAttribute = useDuoCodeAttribute;
+    this.axios = axios;
   }
 
   /**

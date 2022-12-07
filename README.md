@@ -30,17 +30,36 @@ Once it's installed, see our developer documentation at https://duo.com/docs/duo
 import { Client } from '@duosecurity/duo_universal';
 ```
 
-### 2. Create client
+### 2. Build client
 
 Creates new client instance. Provide your Duo Security application credentials and host URL. Include redirect URL to make a way back to your application.
 
 ```ts
-const client = new Client({
+const client = new ClientBuilder({
     clientId: 'yourDuoApplicationClientId',
     clientSecret: 'yourDuoApplicationSecret',
     apiHost: 'api-12345678.duosecurity.com',
     redirectUrl: 'http://localhost:3000/redirect',
-});
+}).build();
+```
+
+You can provide more option to ClientBuilder.
+
+```ts
+const client = new ClientBuilder({
+    clientId: 'yourDuoApplicationClientId',
+    clientSecret: 'yourDuoApplicationSecret',
+    apiHost: 'api-12345678.duosecurity.com',
+    redirectUrl: 'http://localhost:3000/redirect',
+})
+.set_useDuoCodeAttribute(false)
+.set_httpProxy("127.0.0.1", 8080)
+.set_caCerts(`
+---cert begin---
+secretcerts
+---cert end---
+`)
+.build();
 ```
 
 ### 3. Heath check

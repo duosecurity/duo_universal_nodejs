@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import axios from 'axios';
-import { Client, DuoException, constants, util } from '../../src';
+import { Client, ClientBuilder, DuoException, constants, util } from '../../src';
 import { AxiosError } from '../../src/axios-error';
 
 const clientOps = {
@@ -41,7 +41,7 @@ describe('Health check', () => {
       (payload) => typeof payload === 'object' && payload.isAxiosError === true
     );
 
-    client = new Client(clientOps);
+    client = new ClientBuilder(clientOps).build();
   });
 
   it('should thrown when request returned failed result', async () => {
