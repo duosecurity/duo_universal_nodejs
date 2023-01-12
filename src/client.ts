@@ -29,8 +29,8 @@ export type RequiredClientOptions = {
 };
 
 export type ClientOptions = RequiredClientOptions & {
-  useDuoCodeAttribute: boolean;
-  axios: AxiosInstance;
+  useDuoCodeAttribute?: boolean;
+  axios?: AxiosInstance;
 };
 
 export class ClientBuilder {
