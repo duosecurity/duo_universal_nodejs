@@ -12,7 +12,7 @@ Duo especially thanks [Lukas Hroch](https://github.com/lukashroch) for creating 
 
 ## Getting Started
 
-This library requires Node.js v12 or later.
+This library requires Node.js v14 or later.
 
 To use this client in your existing developing environment, install it from NPM
 

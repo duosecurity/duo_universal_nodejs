@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [14.x, 16.x, 18.x]
 
     steps:
       - name: Repository checkout
@@ -32,5 +32,5 @@ jobs:
       - name: Run tests
         run: npm run test:coverage
       - name: Code coverage
-        if: ${{ matrix.node-version == '14.x' }}
+        if: ${{ matrix.node-version == '18.x' }}
         uses: codecov/codecov-action@v1
