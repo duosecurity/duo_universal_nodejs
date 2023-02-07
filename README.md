@@ -22,6 +22,10 @@ npm install @duosecurity/duo_universal
 
 Once it's installed, see our developer documentation at https://duo.com/docs/duoweb and the `example` folder in this repo for guidance on integrating Duo 2FA into your web application.
 
+### TLS 1.2 and 1.3 Support
+
+Duo_universal_nodejs uses the Node tls library and OpenSSL for TLS operations. All versions of Node receiving security support (14 and higher) use OpenSSL 1.1.1 which supports TLS 1.2 and 1.3.
+
 ## Usage Details
 
 ### 1. Import client
