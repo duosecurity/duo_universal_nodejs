@@ -13,13 +13,13 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x, 20.x]
+        node-version: [18.x, 20.x]
 
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2.1.5
+        uses: actions/setup-node@v3.8.1
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install latest npm
@@ -33,5 +33,4 @@ jobs:
       - name: Run tests
         run: npm run test:coverage
       - name: Code coverage
-        if: ${{ matrix.node-version == '18.x' || matrix.node-version == '20.x' }}
         uses: codecov/codecov-action@v1
