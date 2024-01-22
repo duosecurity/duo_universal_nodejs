@@ -25,8 +25,8 @@
     "dist"
   ],
   "scripts": {
-    "build_for_example": "rimraf example/node_modules/@duosecurity/duo_universal && tsc --project tsconfig.build.json --outDir example/node_modules/@duosecurity/duo_universal",
-    "build": "rimraf dist && tsc --project tsconfig.build.json",
+    "build_for_example": "rimraf example/node_modules/@duosecurity/duo_universal && tsc --project tsconfig.build.json --outDir example/node_modules/@duosecurity/duo_universal --resolveJsonModule",
+    "build": "rimraf dist && tsc --project tsconfig.build.json --resolveJsonModule",
     "prepublishOnly": "npm run build",
     "lint": "eslint --ext .ts src/",
     "lint:fix": "npm run lint -- --fix",
