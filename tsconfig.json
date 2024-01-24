@@ -11,7 +11,7 @@
     "declaration": true,
     "strict": true,
     "esModuleInterop": true,
-    "rootDir": "src",
+    "rootDirs": ["src", "."],
     "types": [
       "node",
       "jest",
