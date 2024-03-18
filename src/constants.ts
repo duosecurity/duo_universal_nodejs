@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 
 const pkg = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../package.json'), { encoding: 'utf-8' }),
+  fs.readFileSync(path.join(__dirname, '../package.json'), { encoding: 'utf-8' })
 );
 
 export const CLIENT_ID_LENGTH = 20;
