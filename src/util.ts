@@ -6,7 +6,7 @@
 import { randomBytes } from 'crypto';
 
 function bytesToBase64url(s: Buffer): string {
-  return s.toString('base64').replace('+', '-').replace('/', '_');
+  return s.toString('base64url');
 }
 
 export const generateRandomString = (length: number): string => {
