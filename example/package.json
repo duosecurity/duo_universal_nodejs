@@ -12,8 +12,8 @@
   "dependencies": {
     "body-parser": "^1.20.1",
     "@duosecurity/duo_universal": "^2.0.2",
-    "express": "^4.21.0",
-    "express-session": "^1.17.2",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
     "nunjucks": "^3.2.4"
   }
 }
