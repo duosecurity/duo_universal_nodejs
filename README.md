@@ -92,7 +92,7 @@ Fork the repository
 Install dependencies
 
 ```sh
-npm install
+pnpm install
 ```
 
 Make your proposed changes. Add tests if applicable, lint the code. Submit a pull request.
@@ -100,11 +100,11 @@ Make your proposed changes. Add tests if applicable, lint the code. Submit a pul
 ## Tests
 
 ```sh
-npm run test
+pnpm run test
 ```
 
 ## Lint
 
 ```sh
-npm run lint
+pnpm run lint
 ```
