@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+import { describe, it, expect } from 'vitest';
 import { DuoException } from '../src';
 
 describe('DuoException', () => {

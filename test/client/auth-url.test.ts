@@ -3,7 +3,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import axios from 'axios';
+import { describe, it, expect } from 'vitest';
 import { jwtVerify } from 'jose';
 import { URL } from 'url';
 import { Client, DuoException, constants, util } from '../../src';
@@ -16,48 +16,41 @@ const clientOps = {
 };
 const username = 'username';
 
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-
 describe('Authentication URL', () => {
-  beforeAll(() => {
-    mockedAxios.create.mockReturnThis();
-  });
-
-  it('should throw if state is short for authentication URL', () => {
+  it('should throw if state is short for authentication URL', async () => {
     const client = new Client(clientOps);
     const shortLengthState = util.generateRandomString(constants.MIN_STATE_LENGTH - 1);
 
-    expect(client.createAuthUrl(username, shortLengthState)).rejects.toThrowWithMessage(
+    await expect(client.createAuthUrl(username, shortLengthState)).rejects.instanceOf(
       DuoException,
       constants.DUO_STATE_ERROR,
     );
   });
 
-  it('should thrown if state is long for authentication URL', () => {
+  it('should thrown if state is long for authentication URL', async () => {
     const client = new Client(clientOps);
     const longLengthState = util.generateRandomString(constants.MAX_STATE_LENGTH + 1);
 
-    expect(client.createAuthUrl(username, longLengthState)).rejects.toThrowWithMessage(
+    await expect(client.createAuthUrl(username, longLengthState)).rejects.instanceOf(
       DuoException,
       constants.DUO_STATE_ERROR,
     );
   });
 
-  it('should throw if state is null for authentication URL', () => {
+  it('should throw if state is null for authentication URL', async () => {
     const client = new Client(clientOps);
 
-    expect(client.createAuthUrl(username, null as any)).rejects.toThrowWithMessage(
+    await expect(client.createAuthUrl(username, null as any)).rejects.instanceOf(
       DuoException,
       constants.DUO_STATE_ERROR,
     );
   });
 
-  it('should throw if username is null for authentication URL', () => {
+  it('should throw if username is null for authentication URL', async () => {
     const client = new Client(clientOps);
     const state = client.generateState();
 
-    expect(client.createAuthUrl(null as any, state)).rejects.toThrowWithMessage(
+    await expect(client.createAuthUrl(null as any, state)).rejects.instanceOf(
       DuoException,
       constants.DUO_USERNAME_ERROR,
     );
