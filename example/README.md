@@ -16,7 +16,7 @@ cd duo_universal_nodejs/example
 
 Install dependencies
 ```
-npm install
+pnpm install
 ```
 
 ## Run the application
@@ -25,7 +25,7 @@ npm install
 
 2. Start the application
 ```
-npm run start
+pnpm run start
 ```
 
 3. Navigate to http://localhost:3000
