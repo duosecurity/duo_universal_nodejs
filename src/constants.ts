@@ -3,12 +3,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import fs from 'fs';
-import path from 'path';
-
-const pkg = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../package.json'), { encoding: 'utf-8' }),
-);
+import { version } from '../package.json';
 
 export const CLIENT_ID_LENGTH = 20;
 export const CLIENT_SECRET_LENGTH = 40;
@@ -19,7 +14,7 @@ export const JTI_LENGTH = 36;
 export const JWT_EXPIRATION = 300;
 export const JWT_LEEWAY = 60;
 
-export const USER_AGENT = `duo_universal_node/${pkg.version}`;
+export const USER_AGENT = `duo_universal_node/${version}`;
 export const SIG_ALGORITHM = 'HS512';
 export const GRANT_TYPE = 'authorization_code';
 export const CLIENT_ASSERTION_TYPE = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';

@@ -34,7 +34,6 @@
     "node": ">=18.12.0"
   },
   "files": [
-    "package.json",
     "dist"
   ],
   "scripts": {
