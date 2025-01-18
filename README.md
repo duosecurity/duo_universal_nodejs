@@ -68,7 +68,7 @@ const state = client.generateState();
 Creates authentication URL to redirect user to Duo Security Universal prompt. Provide user identifier and state generated in previous step.
 
 ```ts
-const authUrl = client.createAuthUrl('username', 'state');
+const authUrl = await client.createAuthUrl('username', 'state');
 ```
 
 ### 6. Token & code exchange

@@ -32,7 +32,7 @@ describe('Client instance', () => {
 
     expect(() => new Client({ ...clientOps, clientId: shortClientId })).toThrowWithMessage(
       DuoException,
-      constants.INVALID_CLIENT_ID_ERROR
+      constants.INVALID_CLIENT_ID_ERROR,
     );
   });
 
@@ -41,7 +41,7 @@ describe('Client instance', () => {
 
     expect(() => new Client({ ...clientOps, clientId: longClientId })).toThrowWithMessage(
       DuoException,
-      constants.INVALID_CLIENT_ID_ERROR
+      constants.INVALID_CLIENT_ID_ERROR,
     );
   });
 
@@ -50,7 +50,7 @@ describe('Client instance', () => {
 
     expect(() => new Client({ ...clientOps, clientSecret: shortClientSecret })).toThrowWithMessage(
       DuoException,
-      constants.INVALID_CLIENT_SECRET_ERROR
+      constants.INVALID_CLIENT_SECRET_ERROR,
     );
   });
 
@@ -59,21 +59,21 @@ describe('Client instance', () => {
 
     expect(() => new Client({ ...clientOps, clientSecret: longClientSecret })).toThrowWithMessage(
       DuoException,
-      constants.INVALID_CLIENT_SECRET_ERROR
+      constants.INVALID_CLIENT_SECRET_ERROR,
     );
   });
 
   it('should throw during new client creation with invalid API host', () => {
     expect(() => new Client({ ...clientOps, apiHost: '' })).toThrowWithMessage(
       DuoException,
-      constants.PARSING_CONFIG_ERROR
+      constants.PARSING_CONFIG_ERROR,
     );
   });
 
   it('should throw during new client creation with invalid redirect URL', () => {
     expect(() => new Client({ ...clientOps, redirectUrl: 'notAnUrl' })).toThrowWithMessage(
       DuoException,
-      constants.PARSING_CONFIG_ERROR
+      constants.PARSING_CONFIG_ERROR,
     );
   });
 

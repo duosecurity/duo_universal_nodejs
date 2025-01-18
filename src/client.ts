@@ -5,14 +5,13 @@
 
 import axios, { AxiosInstance } from 'axios';
 import https from 'https';
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from 'jose';
 import { URL, URLSearchParams } from 'url';
 import * as constants from './constants';
 import { DuoException } from './duo-exception';
 import {
   AuthorizationRequest,
   AuthorizationRequestPayload,
-  ClientPayload,
   HealthCheckRequest,
   HealthCheckResponse,
   TokenRequest,
@@ -38,7 +37,7 @@ export class Client {
 
   private clientId: string;
 
-  private clientSecret: string;
+  private clientSecret: Uint8Array;
 
   private apiHost: string;
 
@@ -56,7 +55,7 @@ export class Client {
     const { clientId, clientSecret, apiHost, redirectUrl, useDuoCodeAttribute } = options;
 
     this.clientId = clientId;
-    this.clientSecret = clientSecret;
+    this.clientSecret = new TextEncoder().encode(clientSecret);
     this.apiHost = apiHost;
     this.baseURL = `https://${this.apiHost}`;
     this.redirectUrl = redirectUrl;
@@ -93,7 +92,7 @@ export class Client {
 
     try {
       new URL(redirectUrl);
-    } catch (err) {
+    } catch {
       throw new DuoException(constants.PARSING_CONFIG_ERROR);
     }
   }
@@ -124,19 +123,21 @@ export class Client {
    * @returns {string}
    * @memberof Client
    */
-  private createJwtPayload(audience: string): string {
+  private async createJwtPayload(audience: string): Promise<string> {
     const timeInSecs = getTimeInSeconds();
 
-    const payload: ClientPayload = {
+    const jwt = await new SignJWT({
       iss: this.clientId,
       sub: this.clientId,
       aud: audience,
       jti: generateRandomString(constants.JTI_LENGTH),
       iat: timeInSecs,
       exp: timeInSecs + constants.JWT_EXPIRATION,
-    };
+    })
+      .setProtectedHeader({ alg: constants.SIG_ALGORITHM })
+      .sign(this.clientSecret);
 
-    return jwt.sign(payload, this.clientSecret, { algorithm: constants.SIG_ALGORITHM });
+    return jwt;
   }
 
   /**
@@ -151,22 +152,18 @@ export class Client {
   private async verifyToken<T>(token: string): Promise<T> {
     const tokenEndpoint = `${this.baseURL}${this.TOKEN_ENDPOINT}`;
     const clientId = this.clientId;
-    return new Promise((resolve, reject) => {
-      jwt.verify(
-        token,
-        this.clientSecret,
-        {
-          algorithms: [constants.SIG_ALGORITHM],
-          clockTolerance: constants.JWT_LEEWAY,
-          issuer: tokenEndpoint,
-          audience: clientId,
-        },
-        (err, decoded) =>
-          err || !decoded
-            ? reject(new DuoException(constants.JWT_DECODE_ERROR, err))
-            : resolve(decoded as unknown as T)
-      );
-    });
+    try {
+      const decoded = await jwtVerify<T>(token, this.clientSecret, {
+        algorithms: [constants.SIG_ALGORITHM],
+        clockTolerance: constants.JWT_LEEWAY,
+        issuer: tokenEndpoint,
+        audience: clientId,
+      });
+
+      return decoded.payload;
+    } catch (err) {
+      throw new DuoException(constants.JWT_DECODE_ERROR, err instanceof Error ? err : undefined);
+    }
   }
 
   /**
@@ -208,7 +205,7 @@ export class Client {
    */
   async healthCheck(): Promise<HealthCheckResponse> {
     const audience = `${this.baseURL}${this.HEALTH_CHECK_ENDPOINT}`;
-    const jwtPayload = this.createJwtPayload(audience);
+    const jwtPayload = await this.createJwtPayload(audience);
     const request: HealthCheckRequest = {
       client_id: this.clientId,
       client_assertion: jwtPayload,
@@ -217,7 +214,7 @@ export class Client {
     try {
       const { data } = await this.axios.post<HealthCheckResponse>(
         this.HEALTH_CHECK_ENDPOINT,
-        new URLSearchParams(request)
+        new URLSearchParams(request),
       );
       const { stat } = data;
 
@@ -237,7 +234,7 @@ export class Client {
    * @returns {string}
    * @memberof Client
    */
-  createAuthUrl(username: string, state: string): string {
+  async createAuthUrl(username: string, state: string): Promise<string> {
     if (!username) throw new DuoException(constants.DUO_USERNAME_ERROR);
 
     if (
@@ -262,7 +259,9 @@ export class Client {
       use_duo_code_attribute: this.useDuoCodeAttribute,
     };
 
-    const request = jwt.sign(payload, this.clientSecret, { algorithm: constants.SIG_ALGORITHM });
+    const request = await new SignJWT(payload)
+      .setProtectedHeader({ alg: constants.SIG_ALGORITHM })
+      .sign(this.clientSecret);
 
     const query: AuthorizationRequest = {
       response_type: 'code',
@@ -287,14 +286,14 @@ export class Client {
   async exchangeAuthorizationCodeFor2FAResult(
     code: string,
     username: string,
-    nonce: string | null = null
+    nonce: string | null = null,
   ): Promise<TokenResponsePayload> {
     if (!code) throw new DuoException(constants.MISSING_CODE_ERROR);
 
     if (!username) throw new DuoException(constants.USERNAME_ERROR);
 
     const tokenEndpoint = `${this.baseURL}${this.TOKEN_ENDPOINT}`;
-    const jwtPayload = this.createJwtPayload(tokenEndpoint);
+    const jwtPayload = await this.createJwtPayload(tokenEndpoint);
 
     const request: TokenRequest = {
       grant_type: constants.GRANT_TYPE,
@@ -313,7 +312,7 @@ export class Client {
           headers: {
             'user-agent': `${constants.USER_AGENT} node/${process.versions.node} v8/${process.versions.v8}`,
           },
-        }
+        },
       );
 
       /* Verify that we are receiving the expected response from Duo */

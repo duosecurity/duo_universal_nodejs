@@ -48,12 +48,11 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
-    "jsonwebtoken": "^9.0.2"
+    "jose": "^5.9.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@types/jest": "^29.5.14",
-    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.6",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",

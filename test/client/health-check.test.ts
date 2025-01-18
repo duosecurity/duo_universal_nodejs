@@ -38,7 +38,7 @@ describe('Health check', () => {
     mockedAxios.create.mockReturnThis();
     // restore isAxiosError
     mockedAxios.isAxiosError.mockImplementation(
-      (payload) => typeof payload === 'object' && payload.isAxiosError === true
+      (payload) => typeof payload === 'object' && payload.isAxiosError === true,
     );
 
     client = new Client(clientOps);
