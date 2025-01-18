@@ -12,12 +12,16 @@ Duo especially thanks [Lukas Hroch](https://github.com/lukashroch) for creating 
 
 ## Getting Started
 
-This library requires Node.js v14 or later.
+This library requires Node.js LTS (v18 or later).
 
-To use this client in your existing developing environment, install it from NPM
+To use this client in your existing developing environment, install it with your package manager of choice.
 
 ```sh
 npm install @duosecurity/duo_universal
+
+pnpm add @duosecurity/duo_universal
+
+yarn add @duosecurity/duo_universal
 ```
 
 Once it's installed, see our developer documentation at https://duo.com/docs/duoweb and the `example` folder in this repo for guidance on integrating Duo 2FA into your web application.

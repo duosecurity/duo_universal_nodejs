@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { util } from '../../src/';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
+import { util } from '../../src';
 
 describe('utils', () => {
   const testTimeInMs = 1623060957123;
@@ -11,7 +12,7 @@ describe('utils', () => {
   const RealDate = Date;
 
   beforeEach(() => {
-    global.Date.now = jest.fn(() => new Date(testTimeInMs).getTime());
+    global.Date.now = vi.fn(() => new Date(testTimeInMs).getTime());
   });
 
   afterEach(() => {
