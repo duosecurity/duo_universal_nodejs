@@ -3,14 +3,12 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { randomBytes } from 'crypto';
-
-function bytesToBase64url(s: Buffer): string {
-  return s.toString('base64url');
-}
-
-export const generateRandomString = (length: number): string => {
-  return bytesToBase64url(randomBytes(length)).substring(0, length);
+export const generateRandomString = (length: number) => {
+  const arr = new Uint8Array((length % 2 ? length + 1 : length) / 2);
+  globalThis.crypto.getRandomValues(arr);
+  return Array.from(arr, (dec) => dec.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, length);
 };
 
 export const getTimeInSeconds = (date = new Date(Date.now())): number =>

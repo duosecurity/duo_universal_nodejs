@@ -6,7 +6,6 @@
 import axios, { AxiosInstance } from 'axios';
 import https from 'https';
 import { SignJWT, jwtVerify } from 'jose';
-import { URL, URLSearchParams } from 'url';
 import * as constants from './constants';
 import { DuoException } from './duo-exception';
 import {
@@ -89,9 +88,8 @@ export class Client {
       throw new DuoException(constants.INVALID_CLIENT_SECRET_ERROR);
 
     if (apiHost === '') throw new DuoException(constants.PARSING_CONFIG_ERROR);
-
     try {
-      new URL(redirectUrl);
+      new globalThis.URL(redirectUrl);
     } catch {
       throw new DuoException(constants.PARSING_CONFIG_ERROR);
     }
@@ -214,7 +212,7 @@ export class Client {
     try {
       const { data } = await this.axios.post<HealthCheckResponse>(
         this.HEALTH_CHECK_ENDPOINT,
-        new URLSearchParams(request),
+        new globalThis.URLSearchParams(request),
       );
       const { stat } = data;
 
@@ -271,7 +269,7 @@ export class Client {
       scope: 'openid',
     };
 
-    return `${this.baseURL}${this.AUTHORIZE_ENDPOINT}?${new URLSearchParams(query).toString()}`;
+    return `${this.baseURL}${this.AUTHORIZE_ENDPOINT}?${new globalThis.URLSearchParams(query).toString()}`;
   }
 
   /**
@@ -307,7 +305,7 @@ export class Client {
     try {
       const { data } = await this.axios.post<TokenResponse>(
         this.TOKEN_ENDPOINT,
-        new URLSearchParams(request),
+        new globalThis.URLSearchParams(request),
         {
           headers: {
             'user-agent': `${constants.USER_AGENT} node/${process.versions.node} v8/${process.versions.v8}`,
