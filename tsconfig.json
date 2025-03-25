@@ -2,11 +2,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
-    "target": "ES2019",
+    "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowJs": false,
-    "lib": ["ES2019"],
+    "lib": ["ES2022"],
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

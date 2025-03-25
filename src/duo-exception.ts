@@ -8,7 +8,6 @@ export class DuoException extends Error {
     super(message);
 
     this.name = 'DuoException';
-    Error.captureStackTrace(this, this.constructor);
 
     if (error) this.inner = error;
   }
