@@ -14,18 +14,13 @@ Navigate to example folder
 cd duo_universal_nodejs/example
 ```
 
-Install dependencies
-```
-pnpm install
-```
-
 ## Run the application
 
 1. Copy the Client ID, Client Secret, and API Hostname values for your Web SDK application into `src/config.js`
 
 2. Start the application
 ```
-pnpm run start
+pnpm start
 ```
 
 3. Navigate to http://localhost:3000
