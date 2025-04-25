@@ -3,6 +3,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+import { describe, it, expect } from 'vitest';
 import { util } from '../../src';
 
 describe('Test random string generation function', () => {

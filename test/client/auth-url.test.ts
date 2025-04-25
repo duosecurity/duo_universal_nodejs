@@ -3,8 +3,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-import axios from 'axios';
-import jwt from 'jsonwebtoken';
+import { describe, it, expect } from 'vitest';
+import { jwtVerify } from 'jose';
 import { URL } from 'url';
 import { Client, DuoException, constants, util } from '../../src';
 
@@ -16,57 +16,55 @@ const clientOps = {
 };
 const username = 'username';
 
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-
 describe('Authentication URL', () => {
-  beforeAll(() => {
-    mockedAxios.create.mockReturnThis();
-  });
-
-  it('should throw if state is short for authentication URL', () => {
+  it('should throw if state is short for authentication URL', async () => {
     const client = new Client(clientOps);
     const shortLengthState = util.generateRandomString(constants.MIN_STATE_LENGTH - 1);
 
-    expect(() => {
-      client.createAuthUrl(username, shortLengthState);
-    }).toThrowWithMessage(DuoException, constants.DUO_STATE_ERROR);
+    await expect(client.createAuthUrl(username, shortLengthState)).rejects.instanceOf(
+      DuoException,
+      constants.DUO_STATE_ERROR,
+    );
   });
 
-  it('should thrown if state is long for authentication URL', () => {
+  it('should thrown if state is long for authentication URL', async () => {
     const client = new Client(clientOps);
     const longLengthState = util.generateRandomString(constants.MAX_STATE_LENGTH + 1);
 
-    expect(() => {
-      client.createAuthUrl(username, longLengthState);
-    }).toThrowWithMessage(DuoException, constants.DUO_STATE_ERROR);
+    await expect(client.createAuthUrl(username, longLengthState)).rejects.instanceOf(
+      DuoException,
+      constants.DUO_STATE_ERROR,
+    );
   });
 
-  it('should throw if state is null for authentication URL', () => {
+  it('should throw if state is null for authentication URL', async () => {
     const client = new Client(clientOps);
 
-    expect(() => {
-      client.createAuthUrl(username, null as any);
-    }).toThrowWithMessage(DuoException, constants.DUO_STATE_ERROR);
+    await expect(client.createAuthUrl(username, null as any)).rejects.instanceOf(
+      DuoException,
+      constants.DUO_STATE_ERROR,
+    );
   });
 
-  it('should throw if username is null for authentication URL', () => {
+  it('should throw if username is null for authentication URL', async () => {
     const client = new Client(clientOps);
     const state = client.generateState();
 
-    expect(() => {
-      client.createAuthUrl(null as any, state);
-    }).toThrowWithMessage(DuoException, constants.DUO_USERNAME_ERROR);
+    await expect(client.createAuthUrl(null as any, state)).rejects.instanceOf(
+      DuoException,
+      constants.DUO_USERNAME_ERROR,
+    );
   });
 
-  it(`should create correct authentication URL (default 'useDuoCodeAttribute')`, () => {
+  it(`should create correct authentication URL (default 'useDuoCodeAttribute')`, async () => {
     expect.assertions(7);
 
     const client = new Client(clientOps);
+    const secret = new TextEncoder().encode(clientOps.clientSecret);
     const state = client.generateState();
 
     const { host, protocol, pathname, searchParams } = new URL(
-      client.createAuthUrl(username, state)
+      await client.createAuthUrl(username, state),
     );
     const request = searchParams.get('request');
 
@@ -79,21 +77,20 @@ describe('Authentication URL', () => {
 
     expect(request).not.toBe(null);
     if (request) {
-      const token = jwt.verify(request, clientOps.clientSecret, {
-        algorithms: [constants.SIG_ALGORITHM],
-      });
-      expect((token as any).use_duo_code_attribute).toBe(true);
+      const token = await jwtVerify(request, secret, { algorithms: [constants.SIG_ALGORITHM] });
+      expect(token.payload.use_duo_code_attribute).toBe(true);
     }
   });
 
-  it(`should create correct authentication URL (explicit 'useDuoCodeAttribute')`, () => {
+  it(`should create correct authentication URL (explicit 'useDuoCodeAttribute')`, async () => {
     expect.assertions(7);
 
     const client = new Client({ ...clientOps, useDuoCodeAttribute: false });
+    const secret = new TextEncoder().encode(clientOps.clientSecret);
     const state = client.generateState();
 
     const { host, protocol, pathname, searchParams } = new URL(
-      client.createAuthUrl(username, state)
+      await client.createAuthUrl(username, state),
     );
     const request = searchParams.get('request');
 
@@ -106,10 +103,8 @@ describe('Authentication URL', () => {
 
     expect(request).not.toBe(null);
     if (request) {
-      const token = jwt.verify(request, clientOps.clientSecret, {
-        algorithms: [constants.SIG_ALGORITHM],
-      });
-      expect((token as any).use_duo_code_attribute).toBe(false);
+      const token = await jwtVerify(request, secret, { algorithms: [constants.SIG_ALGORITHM] });
+      expect(token.payload.use_duo_code_attribute).toBe(false);
     }
   });
 });
