@@ -10,9 +10,9 @@
   "keywords": [],
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.20.3",
+    "body-parser": "^2.2.0",
     "@duosecurity/duo_universal": "file:..",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "express-session": "^1.18.1",
     "nunjucks": "^3.2.4"
   }
