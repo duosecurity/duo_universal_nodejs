@@ -12,12 +12,16 @@ Duo especially thanks [Lukas Hroch](https://github.com/lukashroch) for creating 
 
 ## Getting Started
 
-This library requires Node.js v14 or later.
+This library requires Node.js LTS (v20 or later).
 
-To use this client in your existing developing environment, install it from NPM
+To use this client in your existing developing environment, install it with your package manager of choice.
 
 ```sh
 npm install @duosecurity/duo_universal
+
+pnpm add @duosecurity/duo_universal
+
+yarn add @duosecurity/duo_universal
 ```
 
 Once it's installed, see our developer documentation at https://duo.com/docs/duoweb and the `example` folder in this repo for guidance on integrating Duo 2FA into your web application.
@@ -68,7 +72,7 @@ const state = client.generateState();
 Creates authentication URL to redirect user to Duo Security Universal prompt. Provide user identifier and state generated in previous step.
 
 ```ts
-const authUrl = client.createAuthUrl('username', 'state');
+const authUrl = await client.createAuthUrl('username', 'state');
 ```
 
 ### 6. Token & code exchange
@@ -92,7 +96,7 @@ Fork the repository
 Install dependencies
 
 ```sh
-npm install
+pnpm install
 ```
 
 Make your proposed changes. Add tests if applicable, lint the code. Submit a pull request.
@@ -100,11 +104,11 @@ Make your proposed changes. Add tests if applicable, lint the code. Submit a pul
 ## Tests
 
 ```sh
-npm run test
+pnpm run test
 ```
 
 ## Lint
 
 ```sh
-npm run lint
+pnpm run lint
 ```

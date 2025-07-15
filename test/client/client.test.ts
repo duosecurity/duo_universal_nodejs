@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: MIT
 
 import axios from 'axios';
+import { beforeAll, describe, it, expect, vi } from 'vitest';
 import { Client, DuoException, constants, util } from '../../src';
 
 const clientOps = {
@@ -13,12 +14,9 @@ const clientOps = {
   redirectUrl: 'https://redirect-example.com/callback',
 };
 
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-
 describe('Client instance', () => {
   beforeAll(() => {
-    mockedAxios.create.mockReturnThis();
+    vi.spyOn(axios, 'create').mockReturnThis();
   });
 
   it('should successfully create new Client', () => {
@@ -30,50 +28,50 @@ describe('Client instance', () => {
   it('should throw during new client creation with short client ID', () => {
     const shortClientId = util.generateRandomString(constants.CLIENT_ID_LENGTH - 1);
 
-    expect(() => new Client({ ...clientOps, clientId: shortClientId })).toThrowWithMessage(
+    expect(() => new Client({ ...clientOps, clientId: shortClientId })).throw(
       DuoException,
-      constants.INVALID_CLIENT_ID_ERROR
+      constants.INVALID_CLIENT_ID_ERROR,
     );
   });
 
   it('should throw during new client creation with long client ID', () => {
     const longClientId = util.generateRandomString(constants.CLIENT_ID_LENGTH + 1);
 
-    expect(() => new Client({ ...clientOps, clientId: longClientId })).toThrowWithMessage(
+    expect(() => new Client({ ...clientOps, clientId: longClientId })).throw(
       DuoException,
-      constants.INVALID_CLIENT_ID_ERROR
+      constants.INVALID_CLIENT_ID_ERROR,
     );
   });
 
   it('should throw during new client creation with short client secret', () => {
     const shortClientSecret = util.generateRandomString(constants.CLIENT_SECRET_LENGTH - 1);
 
-    expect(() => new Client({ ...clientOps, clientSecret: shortClientSecret })).toThrowWithMessage(
+    expect(() => new Client({ ...clientOps, clientSecret: shortClientSecret })).throw(
       DuoException,
-      constants.INVALID_CLIENT_SECRET_ERROR
+      constants.INVALID_CLIENT_SECRET_ERROR,
     );
   });
 
   it('should throw during new client creation with long client secret', () => {
     const longClientSecret = util.generateRandomString(constants.CLIENT_SECRET_LENGTH + 1);
 
-    expect(() => new Client({ ...clientOps, clientSecret: longClientSecret })).toThrowWithMessage(
+    expect(() => new Client({ ...clientOps, clientSecret: longClientSecret })).throw(
       DuoException,
-      constants.INVALID_CLIENT_SECRET_ERROR
+      constants.INVALID_CLIENT_SECRET_ERROR,
     );
   });
 
   it('should throw during new client creation with invalid API host', () => {
-    expect(() => new Client({ ...clientOps, apiHost: '' })).toThrowWithMessage(
+    expect(() => new Client({ ...clientOps, apiHost: '' })).throw(
       DuoException,
-      constants.PARSING_CONFIG_ERROR
+      constants.PARSING_CONFIG_ERROR,
     );
   });
 
   it('should throw during new client creation with invalid redirect URL', () => {
-    expect(() => new Client({ ...clientOps, redirectUrl: 'notAnUrl' })).toThrowWithMessage(
+    expect(() => new Client({ ...clientOps, redirectUrl: 'notAnUrl' })).throw(
       DuoException,
-      constants.PARSING_CONFIG_ERROR
+      constants.PARSING_CONFIG_ERROR,
     );
   });
 

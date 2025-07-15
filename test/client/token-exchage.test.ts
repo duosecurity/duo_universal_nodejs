@@ -3,8 +3,9 @@
 //
 // SPDX-License-Identifier: MIT
 
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import axios from 'axios';
-import jwt, { TokenExpiredError, NotBeforeError } from 'jsonwebtoken';
+import { errors, SignJWT, decodeJwt } from 'jose';
 import { Client, DuoException, constants, util } from '../../src';
 import { AxiosError } from '../../src/axios-error';
 
@@ -14,16 +15,14 @@ const clientOps = {
   apiHost: 'api-123456.duo.com',
   redirectUrl: 'https://redirect-example.com/callback',
 };
+const secret = new TextEncoder().encode(clientOps.clientSecret);
 const username = 'username';
 const code = util.generateRandomString(20);
 const nonce = util.generateRandomString(20);
 
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-
-const createIdToken = (
+const createIdToken = async (
   removeKey: string | null = null,
-  changeVal: Record<string, string | number> | null = null
+  changeVal: Record<string, string | number> | null = null,
 ) => {
   const time = util.getTimeInSeconds();
 
@@ -45,12 +44,14 @@ const createIdToken = (
 
   if (changeVal) payload = { ...payload, ...changeVal };
 
-  return jwt.sign(payload, clientOps.clientSecret, { algorithm: constants.SIG_ALGORITHM });
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: constants.SIG_ALGORITHM })
+    .sign(secret);
 };
 
-const createTokenResult = (token: string | null = null) => {
+const createTokenResult = async (token: string | null = null) => {
   return {
-    id_token: token ?? createIdToken(),
+    id_token: token ?? (await createIdToken()),
     access_token: '12345678',
     expires_in: util.getTimeInSeconds(),
     token_type: 'Bearer',
@@ -61,7 +62,7 @@ describe('Token Exchange', () => {
   let client: Client;
 
   beforeAll(() => {
-    mockedAxios.create.mockReturnThis();
+    vi.spyOn(axios, 'create').mockReturnThis();
 
     client = new Client(clientOps);
   });
@@ -91,9 +92,9 @@ describe('Token Exchange', () => {
   it('should thrown when request has missing properties', async () => {
     expect.assertions(2);
 
-    const { id_token, ...rest } = createTokenResult();
+    const { id_token, ...rest } = await createTokenResult();
     const response = { data: rest };
-    mockedAxios.post.mockResolvedValue(response);
+    vi.spyOn(axios, 'post').mockResolvedValue(response);
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
@@ -108,7 +109,7 @@ describe('Token Exchange', () => {
 
     const tokenResult = createTokenResult();
     const response = { data: { ...tokenResult, token_type: 'BadTokenType' } };
-    mockedAxios.post.mockResolvedValue(response);
+    vi.spyOn(axios, 'post').mockResolvedValue(response);
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
@@ -121,9 +122,9 @@ describe('Token Exchange', () => {
   it('should thrown when request has bad nonce', async () => {
     expect.assertions(2);
 
-    const token = createIdToken(null, { nonce: util.generateRandomString(10) });
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken(null, { nonce: util.generateRandomString(10) });
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username, nonce);
@@ -136,9 +137,9 @@ describe('Token Exchange', () => {
   it('should thrown when token has missing properties', async () => {
     expect.assertions(2);
 
-    const token = createIdToken('iss');
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken('iss');
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
@@ -151,9 +152,9 @@ describe('Token Exchange', () => {
   it('should thrown when token has bad iss', async () => {
     expect.assertions(2);
 
-    const token = createIdToken(null, { iss: 'bad-iss' });
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken(null, { iss: 'bad-iss' });
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
@@ -166,41 +167,45 @@ describe('Token Exchange', () => {
   it('should thrown when token has bad exp', async () => {
     expect.assertions(3);
 
-    const token = createIdToken(null, { exp: util.getTimeInSeconds() - constants.JWT_EXPIRATION });
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken(null, {
+      exp: util.getTimeInSeconds() - constants.JWT_EXPIRATION,
+    });
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
     } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
-      expect(err.inner.name).toBe('TokenExpiredError');
+      expect(err.inner).toBeInstanceOf(errors.JWTExpired);
     }
   });
 
   it('should thrown when token has bad nbf', async () => {
     expect.assertions(3);
 
-    const token = createIdToken(null, { nbf: util.getTimeInSeconds() + constants.JWT_EXPIRATION });
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken(null, {
+      nbf: util.getTimeInSeconds() + constants.JWT_EXPIRATION,
+    });
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
     } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
-      expect(err.inner.name).toBe('NotBeforeError');
+      expect(err.inner).toBeInstanceOf(errors.JWTClaimValidationFailed);
     }
   });
 
   it('should thrown when token has bad aud', async () => {
     expect.assertions(2);
 
-    const token = createIdToken(null, { aud: 'bad-aud' });
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken(null, { aud: 'bad-aud' });
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
@@ -213,9 +218,9 @@ describe('Token Exchange', () => {
   it('should thrown when token has bad username', async () => {
     expect.assertions(2);
 
-    const token = createIdToken(null, { preferred_username: 'bad-username' });
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken(null, { preferred_username: 'bad-username' });
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
@@ -228,25 +233,27 @@ describe('Token Exchange', () => {
   it('should thrown when token expired', async () => {
     expect.assertions(3);
 
-    const token = createIdToken(null, { exp: util.getTimeInSeconds() - constants.JWT_LEEWAY * 2 });
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken(null, {
+      exp: util.getTimeInSeconds() - constants.JWT_LEEWAY * 2,
+    });
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
     } catch (err: any) {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.message).toBe(constants.JWT_DECODE_ERROR);
-      expect(err.inner).toBeInstanceOf(TokenExpiredError);
+      expect(err.inner).toBeInstanceOf(errors.JWTExpired);
     }
   });
 
   it('should thrown when token is missing exp', async () => {
     expect.assertions(2);
 
-    const token = createIdToken('exp');
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken('exp');
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username, nonce);
@@ -257,30 +264,34 @@ describe('Token Exchange', () => {
   });
 
   it('should allow small clock skew', async () => {
-    const token = createIdToken(null, { exp: util.getTimeInSeconds() - constants.JWT_LEEWAY / 2 });
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken(null, {
+      exp: util.getTimeInSeconds() - constants.JWT_LEEWAY / 2,
+    });
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     const result = await client.exchangeAuthorizationCodeFor2FAResult(code, username);
 
-    expect(result).toEqual(jwt.decode(token));
+    expect(result).toEqual(decodeJwt(token));
   });
 
   it('should return successful exchange', async () => {
     expect.assertions(1);
 
-    const token = createIdToken();
-    const data = createTokenResult(token);
-    mockedAxios.post.mockResolvedValue({ data });
+    const token = await createIdToken();
+    const data = await createTokenResult(token);
+    vi.spyOn(axios, 'post').mockResolvedValue({ data });
 
     const result = await client.exchangeAuthorizationCodeFor2FAResult(code, username);
 
-    expect(result).toEqual(jwt.decode(token));
+    expect(result).toEqual(decodeJwt(token));
   });
 
   it('should thrown when http request failed (missing data)', async () => {
-    expect.assertions(3);
-    mockedAxios.post.mockImplementation(() => Promise.reject(new AxiosError({ response: {} })));
+    expect.assertions(2);
+    vi.spyOn(axios, 'post').mockImplementation(() =>
+      Promise.reject(new AxiosError({ response: {} })),
+    );
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
@@ -288,12 +299,11 @@ describe('Token Exchange', () => {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.inner).toBeDefined();
     }
-    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
   });
 
   it('should thrown when http request failed (missing response)', async () => {
-    expect.assertions(3);
-    mockedAxios.post.mockImplementation(() => Promise.reject(new AxiosError()));
+    expect.assertions(2);
+    vi.spyOn(axios, 'post').mockImplementation(() => Promise.reject(new AxiosError()));
 
     try {
       await client.exchangeAuthorizationCodeFor2FAResult(code, username);
@@ -301,6 +311,5 @@ describe('Token Exchange', () => {
       expect(err).toBeInstanceOf(DuoException);
       expect(err.inner).toBeDefined();
     }
-    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
   });
 });

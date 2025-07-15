@@ -43,7 +43,7 @@ const startApp = async () => {
 
       const state = duoClient.generateState();
       req.session.duo = { state, username };
-      const url = duoClient.createAuthUrl(username, state);
+      const url = await duoClient.createAuthUrl(username, state);
 
       res.redirect(302, url);
     } catch (err) {
