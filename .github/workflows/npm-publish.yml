@@ -31,5 +31,6 @@ jobs:
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
+      - run: npm install -g npm@latest
       - run: pnpm install
       - run: pnpm publish --access public
