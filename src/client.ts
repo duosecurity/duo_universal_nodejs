@@ -69,10 +69,13 @@ export class Client {
       rejectUnauthorized: true,
     });
 
+    const userAgent = `${constants.USER_AGENT} node/${process.versions.node} v8/${process.versions.v8} ca_bundle/${constants.CA_BUNDLE_VERSION} (ca_pinning=${this.enableCAPinning ? 'enabled' : 'disabled'})`;
+
     this.axios = axios.create({
       baseURL: this.baseURL,
       httpsAgent: agent,
       httpAgent: Error('HTTP disabled. Must use HTTPS'),
+      headers: { 'User-Agent': userAgent },
     });
   }
 
@@ -311,11 +314,6 @@ export class Client {
       const { data } = await this.axios.post<TokenResponse>(
         this.TOKEN_ENDPOINT,
         new globalThis.URLSearchParams(request),
-        {
-          headers: {
-            'user-agent': `${constants.USER_AGENT} node/${process.versions.node} v8/${process.versions.v8}`,
-          },
-        },
       );
 
       /* Verify that we are receiving the expected response from Duo */
