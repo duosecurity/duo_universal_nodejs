@@ -25,6 +25,7 @@ export type ClientOptions = {
   apiHost: string;
   redirectUrl: string;
   useDuoCodeAttribute?: boolean;
+  enableCAPinning?: boolean;
 };
 
 export class Client {
@@ -46,12 +47,15 @@ export class Client {
 
   private useDuoCodeAttribute: boolean;
 
+  readonly enableCAPinning: boolean;
+
   private axios: AxiosInstance;
 
   constructor(options: ClientOptions) {
     this.validateInitialConfig(options);
 
-    const { clientId, clientSecret, apiHost, redirectUrl, useDuoCodeAttribute } = options;
+    const { clientId, clientSecret, apiHost, redirectUrl, useDuoCodeAttribute, enableCAPinning } =
+      options;
 
     this.clientId = clientId;
     this.clientSecret = new TextEncoder().encode(clientSecret);
@@ -59,9 +63,10 @@ export class Client {
     this.baseURL = `https://${this.apiHost}`;
     this.redirectUrl = redirectUrl;
     this.useDuoCodeAttribute = useDuoCodeAttribute ?? true;
-
+    this.enableCAPinning = enableCAPinning ?? true;
     const agent = new https.Agent({
-      ca: constants.DUO_PINNED_CERT,
+      ...(this.enableCAPinning ? { ca: constants.DUO_PINNED_CERT } : {}),
+      rejectUnauthorized: true,
     });
 
     this.axios = axios.create({

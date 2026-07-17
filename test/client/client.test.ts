@@ -4,7 +4,8 @@
 // SPDX-License-Identifier: MIT
 
 import axios from 'axios';
-import { beforeAll, describe, it, expect, vi } from 'vitest';
+import https from 'https';
+import { beforeAll, describe, it, expect, vi, type MockInstance } from 'vitest';
 import { Client, DuoException, constants, util } from '../../src';
 
 const clientOps = {
@@ -82,5 +83,47 @@ describe('Client instance', () => {
 
     expect(typeof state).toBe('string');
     expect(state.length).toBe(constants.DEFAULT_STATE_LENGTH);
+  });
+});
+
+describe('CA Pinning', () => {
+  let agentSpy: MockInstance;
+
+  beforeAll(() => {
+    vi.spyOn(axios, 'create').mockReturnThis();
+    agentSpy = vi.spyOn(https, 'Agent') as unknown as MockInstance;
+  });
+
+  it('CA pinning is enabled by default', () => {
+    const client = new Client(clientOps);
+
+    expect(client.enableCAPinning).toBe(true);
+    expect(agentSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ca: constants.DUO_PINNED_CERT,
+        rejectUnauthorized: true,
+      }),
+    );
+  });
+
+  it('CA pinning can be disabled via constructor parameter', () => {
+    const client = new Client({ ...clientOps, enableCAPinning: false });
+
+    expect(client.enableCAPinning).toBe(false);
+    expect(agentSpy).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        ca: constants.DUO_PINNED_CERT,
+      }),
+    );
+  });
+
+  it('TLS verification is still enforced when CA pinning is disabled', () => {
+    new Client({ ...clientOps, enableCAPinning: false });
+
+    expect(agentSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        rejectUnauthorized: true,
+      }),
+    );
   });
 });
