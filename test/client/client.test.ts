@@ -86,6 +86,34 @@ describe('Client instance', () => {
   });
 });
 
+describe('User Agent', () => {
+  let axiosCreateSpy: MockInstance;
+
+  beforeAll(() => {
+    axiosCreateSpy = vi.spyOn(axios, 'create').mockReturnThis();
+  });
+
+  it('User agent includes ca_bundle version and ca_pinning=enabled when pinning is on', () => {
+    new Client(clientOps);
+
+    const config = axiosCreateSpy.mock.lastCall?.[0];
+    const ua = config?.headers?.['User-Agent'] as string;
+
+    expect(ua).toContain(`ca_bundle/${constants.CA_BUNDLE_VERSION}`);
+    expect(ua).toContain('(ca_pinning=enabled)');
+  });
+
+  it('User agent includes ca_pinning=disabled when pinning is off', () => {
+    new Client({ ...clientOps, enableCAPinning: false });
+
+    const config = axiosCreateSpy.mock.lastCall?.[0];
+    const ua = config?.headers?.['User-Agent'] as string;
+
+    expect(ua).toContain(`ca_bundle/${constants.CA_BUNDLE_VERSION}`);
+    expect(ua).toContain('(ca_pinning=disabled)');
+  });
+});
+
 describe('CA Pinning', () => {
   let agentSpy: MockInstance;
 

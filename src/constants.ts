@@ -14,6 +14,7 @@ export const JTI_LENGTH = 36;
 export const JWT_EXPIRATION = 300;
 export const JWT_LEEWAY = 60;
 
+export const CA_BUNDLE_VERSION = '1.0';
 export const USER_AGENT = `duo_universal_node/${version}`;
 export const SIG_ALGORITHM = 'HS512';
 export const GRANT_TYPE = 'authorization_code';
