@@ -45,21 +45,21 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "axios": "1.16.0",
-    "jose": "^6.2.3"
+    "axios": "1.20.0",
+    "jose": "^6.2.12"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
-    "@types/node": "^22.19.17",
-    "@vitest/coverage-v8": "^3.2.4",
-    "eslint": "^9.39.4",
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^22.20.2",
+    "@vitest/coverage-v8": "^5.0.0",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.5",
-    "prettier": "^3.8.3",
+    "eslint-plugin-prettier": "^5.5.6",
+    "prettier": "^3.9.6",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.59.2",
-    "vitest": "^3.2.4"
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.0"
   },
   "overrides": {
     "glob-parent": "^6.0.2"
