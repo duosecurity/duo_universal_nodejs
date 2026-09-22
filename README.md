@@ -103,6 +103,29 @@ const token = await client.exchangeAuthorizationCodeFor2FAResult('duoCode', 'use
 A supplied nonce must be between `MIN_NONCE_LENGTH` (16) and `MAX_NONCE_LENGTH` (1024) characters,
 otherwise a `DuoException` is thrown. Omit `nonce` entirely to leave the claim out of the request.
 
+### Optional: additional authorization parameters
+
+`createAuthUrl` accepts the remaining optional parameters documented for the authorization request.
+Any option you omit is left out of the request entirely.
+
+```ts
+const authUrl = await client.createAuthUrl('username', state, {
+  /* Shown to the user in the prompt and to the admin in the authentication log. */
+  dest_app_name: 'Production Console',
+  /* Long-lived unique identifier for the application being accessed. */
+  dest_app_id: 'console-prod',
+  /* Displayed in the Duo Mobile push request, when it differs from the username. */
+  display_username: 'Sam Weber',
+  /* Reauthenticate if the last interactive authentication is older than this many seconds. */
+  max_age: 300,
+  /* Always reauthenticate, even within an active Duo session. */
+  prompt: 'login',
+});
+```
+
+`max_age` must be a non-negative integer or a `DuoException` is thrown; `0` always forces an
+interactive authentication. `prompt` accepts only `login`, the one value Duo supports.
+
 ## Example
 
 A complete implementation example can be found in [`example/`](/example).

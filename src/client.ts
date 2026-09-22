@@ -25,6 +25,27 @@ export type AuthUrlOptions = {
    * same value to exchangeAuthorizationCodeFor2FAResult to have it verified.
    */
   nonce?: string;
+
+  /** Name of the application the user is authenticating into, shown to the user and the admin. */
+  dest_app_name?: string;
+
+  /** Long-lived unique identifier for the application the user is authenticating into. */
+  dest_app_id?: string;
+
+  /** Username to display in the Duo Mobile push request, when it differs from `duo_uname`. */
+  display_username?: string;
+
+  /**
+   * Seconds since the last interactive authentication after which Duo must prompt again. A value
+   * of `0` always forces an interactive authentication.
+   */
+  max_age?: number;
+
+  /**
+   * Set to `login` to force the user to reauthenticate, even within an active Duo session. `login`
+   * is the only value Duo supports; the type will need widening if that changes.
+   */
+  prompt?: 'login';
 };
 
 export type ClientOptions = {
@@ -273,13 +294,16 @@ export class Client {
     )
       throw new DuoException(constants.DUO_STATE_ERROR);
 
-    const { nonce } = options;
+    const { nonce, dest_app_name, dest_app_id, display_username, max_age, prompt } = options;
 
     if (
       nonce !== undefined &&
       (nonce.length < constants.MIN_NONCE_LENGTH || nonce.length > constants.MAX_NONCE_LENGTH)
     )
       throw new DuoException(constants.DUO_NONCE_ERROR);
+
+    if (max_age !== undefined && (!Number.isInteger(max_age) || max_age < 0))
+      throw new DuoException(constants.DUO_MAX_AGE_ERROR);
 
     const timeInSecs = getTimeInSeconds();
 
@@ -295,6 +319,11 @@ export class Client {
       aud: this.baseURL,
       use_duo_code_attribute: this.useDuoCodeAttribute,
       ...(nonce !== undefined ? { nonce } : {}),
+      ...(dest_app_name !== undefined ? { dest_app_name } : {}),
+      ...(dest_app_id !== undefined ? { dest_app_id } : {}),
+      ...(display_username !== undefined ? { display_username } : {}),
+      ...(max_age !== undefined ? { max_age } : {}),
+      ...(prompt !== undefined ? { prompt } : {}),
     };
 
     const request = await new SignJWT(payload)

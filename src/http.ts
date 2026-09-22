@@ -51,6 +51,11 @@ export type AuthorizationRequestPayload = {
   iss?: string;
   aud?: string;
   nonce?: string;
+  dest_app_name?: string;
+  dest_app_id?: string;
+  display_username?: string;
+  max_age?: number;
+  prompt?: string;
   use_duo_code_attribute?: boolean;
 };
 

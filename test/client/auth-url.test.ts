@@ -184,4 +184,122 @@ describe('Authentication URL', () => {
       expect(err.message).toBe(constants.DUO_NONCE_ERROR);
     }
   });
+
+  it('should include dest_app_name in the request JWT when supplied', async () => {
+    expect.assertions(1);
+
+    const client = new Client(clientOps);
+
+    const request = await getRequestPayload(
+      await client.createAuthUrl(username, client.generateState(), {
+        dest_app_name: 'Production Console',
+      }),
+    );
+
+    expect(request.dest_app_name).toBe('Production Console');
+  });
+
+  it('should include dest_app_id in the request JWT when supplied', async () => {
+    expect.assertions(1);
+
+    const client = new Client(clientOps);
+
+    const request = await getRequestPayload(
+      await client.createAuthUrl(username, client.generateState(), { dest_app_id: 'app-42' }),
+    );
+
+    expect(request.dest_app_id).toBe('app-42');
+  });
+
+  it('should include display_username in the request JWT when supplied', async () => {
+    expect.assertions(1);
+
+    const client = new Client(clientOps);
+
+    const request = await getRequestPayload(
+      await client.createAuthUrl(username, client.generateState(), {
+        display_username: 'Sam Weber',
+      }),
+    );
+
+    expect(request.display_username).toBe('Sam Weber');
+  });
+
+  it('should include max_age in the request JWT when supplied', async () => {
+    expect.assertions(1);
+
+    const client = new Client(clientOps);
+
+    const request = await getRequestPayload(
+      await client.createAuthUrl(username, client.generateState(), { max_age: 300 }),
+    );
+
+    expect(request.max_age).toBe(300);
+  });
+
+  it('should include a max_age of zero, which forces interactive authentication', async () => {
+    expect.assertions(1);
+
+    const client = new Client(clientOps);
+
+    const request = await getRequestPayload(
+      await client.createAuthUrl(username, client.generateState(), { max_age: 0 }),
+    );
+
+    expect(request.max_age).toBe(0);
+  });
+
+  it('should throw if max_age is negative', async () => {
+    expect.assertions(2);
+
+    const client = new Client(clientOps);
+
+    try {
+      await client.createAuthUrl(username, client.generateState(), { max_age: -1 });
+    } catch (err: any) {
+      expect(err).toBeInstanceOf(DuoException);
+      expect(err.message).toBe(constants.DUO_MAX_AGE_ERROR);
+    }
+  });
+
+  it('should throw if max_age is not an integer', async () => {
+    expect.assertions(2);
+
+    const client = new Client(clientOps);
+
+    try {
+      await client.createAuthUrl(username, client.generateState(), { max_age: 1.5 });
+    } catch (err: any) {
+      expect(err).toBeInstanceOf(DuoException);
+      expect(err.message).toBe(constants.DUO_MAX_AGE_ERROR);
+    }
+  });
+
+  it('should include prompt in the request JWT when supplied', async () => {
+    expect.assertions(1);
+
+    const client = new Client(clientOps);
+
+    const request = await getRequestPayload(
+      await client.createAuthUrl(username, client.generateState(), { prompt: 'login' }),
+    );
+
+    expect(request.prompt).toBe('login');
+  });
+
+  it('should omit the optional authorize claims when they are not supplied', async () => {
+    expect.assertions(5);
+
+    const client = new Client(clientOps);
+
+    const request = await getRequestPayload(
+      await client.createAuthUrl(username, client.generateState()),
+    );
+
+    expect(request).not.toHaveProperty('dest_app_name');
+    expect(request).not.toHaveProperty('dest_app_id');
+    expect(request).not.toHaveProperty('display_username');
+    expect(request).not.toHaveProperty('max_age');
+    expect(request).not.toHaveProperty('prompt');
+  });
 });
